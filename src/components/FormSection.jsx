@@ -1,9 +1,9 @@
 import Form from "./Form";
 
-const FormSection = () => {
+const FormSection = ({ onAddJob }) => {
   return (
     <section className="form-section">
-      <Form />
+      <Form onAddJob={onAddJob} />
     </section>
   );
 };
