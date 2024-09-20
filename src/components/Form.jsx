@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Form = ({ onAddJob }) => {
+const Form = () => {
   const [formData, setFormData] = useState({
     name: "",
     number: "",
@@ -34,11 +34,6 @@ const Form = ({ onAddJob }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newJob = {
-      ...formData,
-      completed: false,
-    };
 
     try {
       const response = await fetch("http://localhost:5000/jobs", {
