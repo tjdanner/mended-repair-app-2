@@ -35,6 +35,11 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const newJob = {
+      ...formData,
+      completed: false,
+    };
+
     try {
       const response = await fetch("http://localhost:5000/jobs", {
         method: "POST",
