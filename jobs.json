@@ -1,3 +1,17 @@
 {
-  "jobs": []
+  "jobs": [
+    {
+      "id": "fd00",
+      "name": "TRevro",
+      "number": "5555555555",
+      "email": "test@test.com",
+      "machineType": "M7",
+      "serviceType": {
+        "repair": true,
+        "cleaning": true
+      },
+      "notes": "treget",
+      "completed": false
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Form = () => {
+const Form = ({ addJob }) => {
   const [formData, setFormData] = useState({
     name: "",
     number: "",
@@ -41,37 +41,22 @@ const Form = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      await addJob(newJob);
+
+      setFormData({
+        name: "",
+        number: "",
+        email: "",
+        machineType: "",
+        serviceType: {
+          repair: false,
+          cleaning: false,
         },
-        body: JSON.stringify(newJob),
+        notes: "",
       });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      console.log("Form submission was successful:", data);
-
     } catch (error) {
-      console.error("You done goofed:", error);
+      console.error("Error while submitting form:", error);
     }
-
-    setFormData({
-      name: "",
-      number: "",
-      email: "",
-      machineType: "",
-      serviceType: {
-        repair: false,
-        cleaning: false
-      },
-      notes: ""
-    });
-
   };
 
   return (

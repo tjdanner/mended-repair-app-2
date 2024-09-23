@@ -1,17 +1,16 @@
 const JobCard = ({ job }) => {
-  const { name, number, email, machineType, serviceType, notes } = job;
 
   return (
     <div className="job-card">
-      <p>{name}</p>
-      <p>{number}</p>
-      <p>{email}</p>
-      <p>{machineType}</p>
+      <p>{job.name}</p>
+      <p>{job.number}</p>
+      <p>{job.email}</p>
+      <p>{job.machineType}</p>
       <p>
-        {serviceType.repair ? "Repair" : ""}
-        {serviceType.cleaning ? "Cleaning" : ""}
+        {job.serviceType.repair ? "Repair" : ""}
+        {job.serviceType.cleaning ? "Cleaning" : ""}
       </p>
-      <p>{notes}</p>
+      <p>{job.notes}</p>
     </div>
   );
 };
