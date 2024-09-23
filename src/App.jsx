@@ -28,23 +28,25 @@ const App = () => {
     }
   };
 
-  const updateJobStatus = async (jobId, completedStatus) => {
+  const updateJobStatus = async (jobId, currentStatus) => {
+    const updatedStatus = !currentStatus;
+
     try {
       const response = await fetch(`http://localhost:5000/jobs/${jobId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ completed: true }),
+        body: JSON.stringify({ completed: updatedStatus }), // Use updatedStatus here
       });
 
       if (!response.ok) {
         throw new Error("Failed to update job status");
       }
 
-      console.log(`Job ${jobId} marked as completed on the server.`);
-
       const updatedJob = await response.json();
+
+      console.log(`Job ${jobId} marked as ${updatedStatus ? "completed" : "in progress"} on the server.`);
 
       setJobs((prevJobs) =>
         prevJobs.map((job) =>

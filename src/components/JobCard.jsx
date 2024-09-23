@@ -11,7 +11,9 @@ const JobCard = ({ job, updateJobStatus, deleteJob }) => {
       <p>{job.machineType || "No machine type specified"}</p>
       <p>{serviceTypes.length > 0 ? serviceTypes.join(", ") : "No service type specified"}</p>
       <p>{job.notes || "No additional notes."}</p>
-      <button onClick={() => updateJobStatus(job.id)}>Mark as Complete</button>
+      <button onClick={() => updateJobStatus(job.id, job.completed)}>
+        {job.completed ? "Reopen Job" : "Mark as Complete"}
+      </button>
       <button onClick={() => deleteJob(job.id)}>Delete</button>
     </div>
   );

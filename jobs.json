@@ -1,17 +1,3 @@
 {
-  "jobs": [
-    {
-      "id": "a4c6",
-      "name": "Test Mcgee",
-      "number": "123456789",
-      "email": "test@test.com",
-      "machineType": "M7",
-      "serviceType": {
-        "repair": true,
-        "cleaning": true
-      },
-      "notes": "Test",
-      "completed": true
-    }
-  ]
+  "jobs": []
 }
