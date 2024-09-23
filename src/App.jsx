@@ -26,6 +26,20 @@ const App = () => {
     }
   };
 
+  const deleteJob = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/jobs/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
+    } catch (error) {
+      console.error("Error deleting job:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -44,7 +58,7 @@ const App = () => {
     <>
       <Banner />
       <FormSection addJob={addJob} />
-      <JobListingSection jobs={jobs} />
+      <JobListingSection jobs={jobs} deleteJob={deleteJob} />
     </>
   );
 };

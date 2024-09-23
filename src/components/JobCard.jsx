@@ -1,17 +1,19 @@
-const JobCard = ({ job }) => {
+const JobCard = ({ job, deleteJob }) => {
+  const serviceTypes = [];
+  if (job.serviceType.repair) serviceTypes.push("Repair");
+  if (job.serviceType.cleaning) serviceTypes.push("Cleaning");
 
   return (
     <div className="job-card">
-      <p>{job.name}</p>
-      <p>{job.number}</p>
-      <p>{job.email}</p>
-      <p>{job.machineType}</p>
-      <p>
-        {job.serviceType.repair ? "Repair" : ""}
-        {job.serviceType.cleaning ? "Cleaning" : ""}
-      </p>
-      <p>{job.notes}</p>
+      <p>{job.name || "No name provided"}</p>
+      <p>{job.number || "No phone number provided"}</p>
+      <p>{job.email || "No email provided"}</p>
+      <p>{job.machineType || "No machine type specified"}</p>
+      <p>{serviceTypes.length > 0 ? serviceTypes.join(", ") : "No service type specified"}</p>
+      <p>{job.notes || "No additional notes."}</p>
+      <button onClick={() => deleteJob(job.id)}>Delete</button>
     </div>
   );
 };
+
 export default JobCard;

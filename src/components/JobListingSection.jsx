@@ -1,14 +1,13 @@
-import JobCard from "./JobCard";
 import JobList from "./JobList";
 
-const JobListingSection = ({ jobs }) => {
+const JobListingSection = ({ jobs, deleteJob }) => {
   const inProgressJobs = jobs.filter(job => !job.completed);
   const completedJobs = jobs.filter(job => job.completed);
 
   return (
     <section className="job-listing-section">
-      <JobList heading={"Jobs in Progress"} jobs={inProgressJobs} />
-      <JobList heading={"Completed Jobs"} jobs={completedJobs} />
+      <JobList heading={"Jobs in Progress"} jobs={inProgressJobs} deleteJob={deleteJob} />
+      <JobList heading={"Completed Jobs"} jobs={completedJobs} deleteJob={deleteJob} />
     </section>
   );
 };
