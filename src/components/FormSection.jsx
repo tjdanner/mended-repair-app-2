@@ -1,9 +1,13 @@
 import Form from "./Form";
 
-const FormSection = ({ addJob }) => {
+const FormSection = ({ formData, handleInputChange, handleSubmit }) => {
   return (
     <section className="form-section">
-      <Form addJob={addJob} />
+      <Form
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+      />
     </section>
   );
 };

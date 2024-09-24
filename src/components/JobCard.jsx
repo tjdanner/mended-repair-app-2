@@ -14,6 +14,7 @@ const JobCard = ({ job, updateJobStatus, deleteJob }) => {
       <button onClick={() => updateJobStatus(job.id, job.completed)}>
         {job.completed ? "Reopen Job" : "Mark as Complete"}
       </button>
+      <button>Edit</button>
       <button onClick={() => deleteJob(job.id)}>Delete</button>
     </div>
   );

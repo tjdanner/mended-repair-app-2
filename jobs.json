@@ -1,3 +1,43 @@
 {
-  "jobs": []
+  "jobs": [
+    {
+      "id": "0c17",
+      "name": "Dummy Data",
+      "number": "123456789",
+      "email": "dummy@test.com",
+      "machineType": "M7",
+      "serviceType": {
+        "repair": true,
+        "cleaning": true
+      },
+      "notes": "Dummy data.",
+      "completed": true
+    },
+    {
+      "id": "6aa8",
+      "name": "Anotha One",
+      "number": "5555555555",
+      "email": "test@test.com",
+      "machineType": "M7",
+      "serviceType": {
+        "repair": true,
+        "cleaning": true
+      },
+      "notes": "Wait, wut?\n",
+      "completed": false
+    },
+    {
+      "id": "3e6c",
+      "name": "Once Again",
+      "number": "5154025206",
+      "email": "tjdanner01@gmail.com",
+      "machineType": "Skyline",
+      "serviceType": {
+        "repair": true,
+        "cleaning": false
+      },
+      "notes": "Hello",
+      "completed": false
+    }
+  ]
 }

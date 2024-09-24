@@ -7,6 +7,31 @@ const App = () => {
   const jobApiUrl = "http://localhost:5000/jobs";
 
   const [jobs, setJobs] = useState([]);
+  const [formData, setFormData] = useState({
+    name: "",
+    number: "",
+    email: "",
+    machineType: "",
+    serviceType: {
+      repair: false,
+      cleaning: false
+    },
+    notes: ""
+  });
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch(jobApiUrl);
+        const data = await response.json();
+        setJobs(data);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+    };
+
+    fetchJobs();
+  }, []);
 
   const addJob = async (newJob) => {
     try {
@@ -28,6 +53,52 @@ const App = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === "checkbox") {
+      setFormData((prevState) => ({
+        ...prevState,
+        serviceType: {
+          ...prevState.serviceType,
+          [value]: checked,
+        },
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value || "",
+      }));
+    };
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const newJob = {
+      ...formData,
+      completed: false,
+    };
+
+    try {
+      await addJob(newJob);
+
+      setFormData({
+        name: "",
+        number: "",
+        email: "",
+        machineType: "",
+        serviceType: {
+          repair: false,
+          cleaning: false,
+        },
+        notes: "",
+      });
+    } catch (error) {
+      console.error("Error while submitting form:", error);
+    }
+  };
+
   const updateJobStatus = async (jobId, currentStatus) => {
     const updatedStatus = !currentStatus;
 
@@ -37,7 +108,7 @@ const App = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ completed: updatedStatus }), // Use updatedStatus here
+        body: JSON.stringify({ completed: updatedStatus }),
       });
 
       if (!response.ok) {
@@ -72,25 +143,21 @@ const App = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await fetch(jobApiUrl);
-        const data = await response.json();
-        setJobs(data);
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-      }
-    };
 
-    fetchJobs();
-  }, []);
 
   return (
     <>
       <Banner />
-      <FormSection addJob={addJob} />
-      <JobListingSection jobs={jobs} updateJobStatus={updateJobStatus} deleteJob={deleteJob} />
+      <FormSection
+        formData={formData}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+      />
+      <JobListingSection
+        jobs={jobs}
+        updateJobStatus={updateJobStatus}
+        deleteJob={deleteJob}
+      />
     </>
   );
 };
