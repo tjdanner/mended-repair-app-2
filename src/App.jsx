@@ -18,6 +18,7 @@ const App = () => {
     },
     notes: ""
   });
+  const [editingJob, setEditingJob] = useState(null);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -32,26 +33,6 @@ const App = () => {
 
     fetchJobs();
   }, []);
-
-  const addJob = async (newJob) => {
-    try {
-      const response = await fetch(jobApiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(newJob),
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      setJobs((prevJobs) => [...prevJobs, data]);
-    } catch (error) {
-      console.error("Error adding job:", error);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -72,31 +53,34 @@ const App = () => {
     };
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const newJob = {
-      ...formData,
-      completed: false,
-    };
-
-    try {
-      await addJob(newJob);
-
-      setFormData({
-        name: "",
-        number: "",
-        email: "",
-        machineType: "",
-        serviceType: {
-          repair: false,
-          cleaning: false,
-        },
-        notes: "",
-      });
-    } catch (error) {
-      console.error("Error while submitting form:", error);
+    if (editingJob) {
+      // Update existing job
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === editingJob.id ? { ...editingJob, ...formData } : job
+        )
+      );
+      setEditingJob(null); // Reset after edit
+    } else {
+      // Add new job
+      const newJob = {
+        id: Math.random().toString(36).substr(2, 9), // Generate a random ID
+        ...formData,
+      };
+      setJobs((prevJobs) => [...prevJobs, newJob]);
     }
+
+    setFormData({
+      name: "",
+      number: "",
+      email: "",
+      machineType: "",
+      serviceType: { repair: false, cleaning: false },
+      notes: "",
+    });
   };
 
   const updateJobStatus = async (jobId, currentStatus) => {
@@ -129,6 +113,19 @@ const App = () => {
     }
   };
 
+  const editJob = (job) => {
+    setFormData({
+      name: job.name,
+      number: job.number,
+      email: job.email,
+      machineType: job.machineType,
+      serviceType: job.serviceType,
+      notes: job.notes,
+    });
+
+    setEditingJob(job);
+  };
+
   const deleteJob = async (id) => {
     try {
       const response = await fetch(`${jobApiUrl}/${id}`, {
@@ -143,8 +140,6 @@ const App = () => {
     }
   };
 
-
-
   return (
     <>
       <Banner />
@@ -156,6 +151,7 @@ const App = () => {
       <JobListingSection
         jobs={jobs}
         updateJobStatus={updateJobStatus}
+        editJob={editJob}
         deleteJob={deleteJob}
       />
     </>

@@ -11,7 +11,7 @@
         "cleaning": true
       },
       "notes": "Dummy data.",
-      "completed": true
+      "completed": false
     },
     {
       "id": "6aa8",
@@ -24,7 +24,7 @@
         "cleaning": true
       },
       "notes": "Wait, wut?\n",
-      "completed": false
+      "completed": true
     },
     {
       "id": "3e6c",

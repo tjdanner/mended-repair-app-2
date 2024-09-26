@@ -1,4 +1,4 @@
-const JobCard = ({ job, updateJobStatus, deleteJob }) => {
+const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
   const serviceTypes = [];
   if (job.serviceType.repair) serviceTypes.push("Repair");
   if (job.serviceType.cleaning) serviceTypes.push("Cleaning");
@@ -14,7 +14,7 @@ const JobCard = ({ job, updateJobStatus, deleteJob }) => {
       <button onClick={() => updateJobStatus(job.id, job.completed)}>
         {job.completed ? "Reopen Job" : "Mark as Complete"}
       </button>
-      <button>Edit</button>
+      <button onClick={() => editJob(job)}>Edit</button>
       <button onClick={() => deleteJob(job.id)}>Delete</button>
     </div>
   );
