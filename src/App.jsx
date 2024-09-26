@@ -114,6 +114,8 @@ const App = () => {
   };
 
   const editJob = (job) => {
+    const formTop = document.querySelector(".form-section");
+
     setFormData({
       name: job.name,
       number: job.number,
@@ -124,6 +126,8 @@ const App = () => {
     });
 
     setEditingJob(job);
+
+    formTop.scrollIntoView({ behavior: 'smooth' });
   };
 
   const deleteJob = async (id) => {
