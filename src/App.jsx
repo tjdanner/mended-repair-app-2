@@ -53,24 +53,52 @@ const App = () => {
     };
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (editingJob) {
-      // Update existing job
-      setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job.id === editingJob.id ? { ...editingJob, ...formData } : job
-        )
-      );
-      setEditingJob(null); // Reset after edit
+      try {
+        const updatedJobData = {
+          ...formData,
+          completed: editingJob.completed,
+        };
+
+        await fetch(`${jobApiUrl}/${editingJob.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedJobData),
+        });
+
+        setJobs((prevJobs) =>
+          prevJobs.map((job) =>
+            job.id === editingJob.id
+              ? { ...job, ...updatedJobData }
+              : job
+          )
+        );
+
+        setEditingJob(null);
+      } catch (error) {
+        console.error("Failed to update job:", error);
+      }
     } else {
-      // Add new job
       const newJob = {
-        id: Math.random().toString(36).substr(2, 9), // Generate a random ID
+        id: Math.random().toString(36).substr(2, 9),
         ...formData,
+        completed: false,
       };
-      setJobs((prevJobs) => [...prevJobs, newJob]);
+
+      try {
+        await fetch("/api/jobs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newJob),
+        });
+
+        setJobs((prevJobs) => [...prevJobs, newJob]);
+      } catch (error) {
+        console.error("Failed to add job:", error);
+      }
     }
 
     setFormData({

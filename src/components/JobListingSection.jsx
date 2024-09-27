@@ -1,6 +1,6 @@
 import JobList from "./JobList";
 
-const JobListingSection = ({ jobs, updateJobStatus, editJob, handleEditJob, deleteJob }) => {
+const JobListingSection = ({ jobs, updateJobStatus, editJob, editingJobId, deleteJob }) => {
   const inProgressJobs = jobs.filter(job => !job.completed);
   const completedJobs = jobs.filter(job => job.completed);
 
@@ -11,6 +11,7 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, handleEditJob, dele
         jobs={inProgressJobs}
         updateJobStatus={updateJobStatus}
         editJob={editJob}
+        editingJobId={editingJobId}
         deleteJob={deleteJob}
       />
       <JobList
@@ -18,6 +19,7 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, handleEditJob, dele
         jobs={completedJobs}
         updateJobStatus={updateJobStatus}
         editJob={editJob}
+        editingJobId={editingJobId}
         deleteJob={deleteJob}
       />
     </section>

@@ -2,6 +2,7 @@
   "jobs": [
     {
       "id": "0c17",
+      "completed": true,
       "name": "Dummy Data",
       "number": "123456789",
       "email": "dummy@test.com",
@@ -10,11 +11,9 @@
         "repair": true,
         "cleaning": true
       },
-      "notes": "Dummy data.",
-      "completed": false
+      "notes": "Dummy data. aaaaaaaaa"
     },
     {
-      "id": "6aa8",
       "name": "Anotha One",
       "number": "5555555555",
       "email": "test@test.com",
@@ -23,12 +22,12 @@
         "repair": true,
         "cleaning": true
       },
-      "notes": "Wait, wut?\n",
-      "completed": true
+      "notes": "asfdasdfadfs\n asdfasdfasdfasd ",
+      "completed": true,
+      "id": "6aa8"
     },
     {
-      "id": "3e6c",
-      "name": "Once Again",
+      "name": "Try Again",
       "number": "5154025206",
       "email": "tjdanner01@gmail.com",
       "machineType": "Skyline",
@@ -37,7 +36,8 @@
         "cleaning": false
       },
       "notes": "Hello",
-      "completed": false
+      "id": "3e6c",
+      "completed": true
     }
   ]
 }
