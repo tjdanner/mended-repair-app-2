@@ -20,6 +20,8 @@ const App = () => {
   });
   const [editingJob, setEditingJob] = useState(null);
 
+  const [searchJobs, setSearchJobs] = useState([]);
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -89,7 +91,7 @@ const App = () => {
       };
 
       try {
-        await fetch("/api/jobs", {
+        await fetch(jobApiUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newJob),

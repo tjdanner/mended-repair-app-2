@@ -2,7 +2,7 @@
   "jobs": [
     {
       "id": "0c17",
-      "completed": true,
+      "completed": false,
       "name": "Dummy Data",
       "number": "123456789",
       "email": "dummy@test.com",
@@ -23,7 +23,7 @@
         "cleaning": true
       },
       "notes": "asfdasdfadfs\n asdfasdfasdfasd ",
-      "completed": true,
+      "completed": false,
       "id": "6aa8"
     },
     {
@@ -37,7 +37,20 @@
       },
       "notes": "Hello",
       "id": "3e6c",
-      "completed": true
+      "completed": false
+    },
+    {
+      "name": "Trevor",
+      "number": "5154025206",
+      "email": "tjdanner01@gmail.com",
+      "machineType": "M7",
+      "serviceType": {
+        "repair": false,
+        "cleaning": true
+      },
+      "notes": "Test",
+      "completed": false,
+      "id": "dl98fgjsc"
     }
   ]
 }
