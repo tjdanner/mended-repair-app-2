@@ -35,11 +35,11 @@ const Form = ({ formData, handleInputChange, handleSubmit }) => {
       </div>
 
       <div className="form-group">
-        <label htmlFor="machineType">Machine Type</label>
+        <label htmlFor="machine_type">Machine Type</label>
         <select
-          id="machineType"
-          name="machineType"
-          value={formData.machineType}
+          id="machine_type"
+          name="machine_type"
+          value={formData.machine_type}
           onChange={handleInputChange}
         >
           <option value=""></option>
@@ -54,9 +54,9 @@ const Form = ({ formData, handleInputChange, handleSubmit }) => {
           <input
             type="checkbox"
             id="repair"
-            name="serviceType"
+            name="service_type"
             value="repair"
-            checked={formData.serviceType.repair}
+            checked={formData.service_type.repair}
             onChange={handleInputChange}
           />
           <label htmlFor="repair">Repair</label>
@@ -65,9 +65,9 @@ const Form = ({ formData, handleInputChange, handleSubmit }) => {
           <input
             type="checkbox"
             id="cleaning"
-            name="serviceType"
+            name="service_type"
             value="cleaning"
-            checked={formData.serviceType.cleaning}
+            checked={formData.service_type.cleaning}
             onChange={handleInputChange}
           />
           <label htmlFor="cleaning">Cleaning</label>

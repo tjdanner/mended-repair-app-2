@@ -5,15 +5,14 @@ import FormSection from "./components/FormSection";
 import JobListingSection from "./components/JobListingSection";
 
 const App = () => {
-  const jobApiUrl = "http://localhost:5000/jobs";
 
   const [jobs, setJobs] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     number: "",
     email: "",
-    machineType: "",
-    serviceType: {
+    machine_type: "",
+    service_type: {
       repair: false,
       cleaning: false
     },
@@ -22,10 +21,10 @@ const App = () => {
   const [editingJob, setEditingJob] = useState(null);
 
   useEffect(() => {
-
-
     const fetchJobs = async () => {
-      const { data, error } = await supabase.from("jobs").select('*');
+      const { data, error } = await supabase
+        .from("jobs")
+        .select('*');
       if (error) {
         console.error("Error fetching jobs:", error);
       } else {
@@ -39,18 +38,19 @@ const App = () => {
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (type === "checkbox") {
+    if (name === "service_type") {
       setFormData((prevState) => ({
         ...prevState,
-        serviceType: {
-          ...prevState.serviceType,
+        service_type: {
+          ...prevState.service_type,
           [value]: checked,
         },
       }));
+
     } else {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value || "",
+        [name]: type === "checkbox" ? checked : value,
       }));
     };
   };
@@ -58,84 +58,75 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (editingJob) {
-      try {
-        const updatedJobData = {
-          ...formData,
-          completed: editingJob.completed,
-        };
+    const jobData = {
+      ...formData,
+      service_type: formData.service_type,
+      completed: editingJob ? editingJob.completed : false,
+    };
 
-        await fetch(`${jobApiUrl}/${editingJob.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedJobData),
-        });
+    try {
+      if (editingJob) {
+        const { error } = await supabase
+          .from("jobs")
+          .update(jobData)
+          .eq('id', editingJob.id);
+
+        if (error) throw error;
 
         setJobs((prevJobs) =>
           prevJobs.map((job) =>
-            job.id === editingJob.id
-              ? { ...job, ...updatedJobData }
-              : job
+            job.id === editingJob.id ? { ...job, ...jobData } : job
           )
         );
-
         setEditingJob(null);
-      } catch (error) {
-        console.error("Failed to update job:", error);
-      }
-    } else {
-      const newJob = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...formData,
-        completed: false,
-      };
+      } else {
+        const { data, error } = await supabase
+          .from("jobs")
+          .insert([jobData])
+          .select(); // Retrieves the inserted job with the auto-generated ID
 
-      try {
-        await fetch(jobApiUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newJob),
-        });
+        if (error) throw error;
 
-        setJobs((prevJobs) => [...prevJobs, newJob]);
-      } catch (error) {
-        console.error("Failed to add job:", error);
+        // Use the actual ID returned by Supabase (int8 auto-increment)
+        setJobs((prevJobs) => [...prevJobs, data[0]]);
       }
+
+      setFormData({
+        name: "",
+        number: "",
+        email: "",
+        machine_type: "",
+        service_type: {
+          repair: false,
+          cleaning: false
+        },
+        notes: ""
+      });
+    } catch (error) {
+      console.error("Failed to save job:", error);
     }
-
-    setFormData({
-      name: "",
-      number: "",
-      email: "",
-      machineType: "",
-      serviceType: { repair: false, cleaning: false },
-      notes: "",
-    });
   };
+
 
   const updateJobStatus = async (jobId, currentStatus) => {
     const updatedStatus = !currentStatus;
 
     try {
-      const response = await fetch(`http://localhost:5000/jobs/${jobId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ completed: updatedStatus }),
-      });
+      const { error } = await supabase
+        .from('jobs')
+        .update({ completed: updatedStatus })
+        .eq('id', jobId);
 
-      if (!response.ok) {
-        throw new Error("Failed to update job status");
+      if (error) {
+        throw new Error("Failed to update job status: " + error.message);
       }
 
-      const updatedJob = await response.json();
+      console.log(`Job ${jobId} marked as ${updatedStatus ? "completed" : "in progress"} in Supabase.`);
 
-      console.log(`Job ${jobId} marked as ${updatedStatus ? "completed" : "in progress"} on the server.`);
-
+      // Update local state
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
-          job.id === updatedJob.id ? updatedJob : job
+          job.id === jobId ? { ...job, completed: updatedStatus } : job
         )
       );
     } catch (error) {
@@ -144,30 +135,51 @@ const App = () => {
   };
 
   const editJob = (job) => {
+    const { name, number, email, machine_type, service_type, notes } = job;
+
     const formTop = document.querySelector(".form-section");
 
     setFormData({
-      name: job.name,
-      number: job.number,
-      email: job.email,
-      machineType: job.machineType,
-      serviceType: job.serviceType,
-      notes: job.notes,
+      name: name || "",
+      number: number || "",
+      email: email || "",
+      machine_type: machine_type || "",
+      service_type: {
+        repair: service_type?.repair || false,
+        cleaning: service_type?.cleaning || false,
+      },
+      notes: notes || "",
     });
 
-    setEditingJob(job);
+    setEditingJob({
+      ...job,
+      last_modified: new Date().toISOString()
+    });
 
     formTop.scrollIntoView({ behavior: 'smooth' });
   };
 
   const deleteJob = async (id) => {
     try {
-      const response = await fetch(`${jobApiUrl}/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      console.log("Deleting job with ID:", id);  // Log the ID you're trying to delete
+
+      const { data, error } = await supabase
+        .from("jobs")
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw new Error("Failed to delete job: " + error.message);
       }
+
+      // Check if data is null or the job was not found
+      if (!data || data.length === 0) {
+        throw new Error("No rows deleted. Please check the job ID.");
+      }
+
+      console.log(`Job ${id} deleted from Supabase.`);
+
+      // Remove from the local state
       setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
     } catch (error) {
       console.error("Error deleting job:", error);
