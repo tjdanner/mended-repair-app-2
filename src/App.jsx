@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
 import Banner from "./components/Banner";
 import FormSection from "./components/FormSection";
 import JobListingSection from "./components/JobListingSection";
@@ -20,16 +21,15 @@ const App = () => {
   });
   const [editingJob, setEditingJob] = useState(null);
 
-  const [searchJobs, setSearchJobs] = useState([]);
-
   useEffect(() => {
+
+
     const fetchJobs = async () => {
-      try {
-        const response = await fetch(jobApiUrl);
-        const data = await response.json();
-        setJobs(data);
-      } catch (error) {
+      const { data, error } = await supabase.from("jobs").select('*');
+      if (error) {
         console.error("Error fetching jobs:", error);
+      } else {
+        setJobs(data);
       }
     };
 
