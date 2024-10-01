@@ -159,9 +159,9 @@ const App = () => {
 
   const deleteJob = async (id) => {
     try {
-      console.log("Deleting job with ID:", id);  // Log the ID you're trying to delete
+      console.log("Deleting job with ID:", id);
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("jobs")
         .delete()
         .eq('id', id);
@@ -170,15 +170,10 @@ const App = () => {
         throw new Error("Failed to delete job: " + error.message);
       }
 
-      // Check if data is null or the job was not found
-      if (!data || data.length === 0) {
-        throw new Error("No rows deleted. Please check the job ID.");
-      }
-
       console.log(`Job ${id} deleted from Supabase.`);
 
-      // Remove from the local state
       setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
+
     } catch (error) {
       console.error("Error deleting job:", error);
     }
