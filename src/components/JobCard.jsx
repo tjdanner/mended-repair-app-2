@@ -68,7 +68,7 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
       </div>
 
       <div id="service-details" className="job-card-group">
-        <h3>Service Details</h3>
+        <h3>Service Details:</h3>
         <div className="job-card-line">
           <span className="job-card-label">Machine Type:</span>
           <p id="job-card-machine-type">{job.machine_type || "No machine type specified"}</p>
