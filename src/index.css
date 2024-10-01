@@ -56,21 +56,33 @@ p {
   margin-bottom: 12px;
 }
 
+.form-group > label {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group > .checkbox-container > label {
+  font-family: inherit;
+  font-size: 16px;
+}
+
 input,
 select,
 textarea {
   background-color: white;
   border: 1px solid #4400ff;
-}
-
-input,
-select {
-  height: 32px;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 16px;
 }
 
 .checkbox-container {
   display: flex;
   align-items: center;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #notes {
