@@ -193,6 +193,16 @@ select {
   }
 
   .job-card-date {
-    font-size: 14px;
+    font-size: 16px;
+  }
+
+  #dates {
+    gap: 8px;
+  }
+
+  #dates > .job-card-line {
+    flex-direction: column;
+    align-items: start;
+    gap: 0;
   }
 }
