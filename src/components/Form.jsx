@@ -84,7 +84,7 @@ const Form = ({ formData, handleInputChange, handleSubmit }) => {
         ></textarea>
       </div>
 
-      <button type="submit">Submit</button>
+      <button className="btn" id="submit-btn" type="submit">Submit</button>
     </form>
   );
 };

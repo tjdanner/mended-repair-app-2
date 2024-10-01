@@ -90,6 +90,14 @@ textarea {
   font-family: inherit;
 }
 
+#submit-btn {
+  margin-top: 8px;
+}
+
+#submit-btn:hover {
+  color: #d7b4f1 !important;
+}
+
 .job-listing-section {
   display: flex;
   justify-content: center;
@@ -146,6 +154,7 @@ textarea {
   color: #2f2f2f;
   border-color: #2f2f2f;
   transition: 400ms;
+  background-color: none;
 }
 
 .btn:hover {
