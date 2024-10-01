@@ -32,7 +32,8 @@ p {
 }
 
 .mended-logo {
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .title-container {
@@ -50,6 +51,7 @@ p {
   width: 500px;
   padding: 32px;
   background-color: #f3f3f3;
+  border-radius: 16px;
 }
 
 .form-group {
@@ -90,11 +92,107 @@ select {
 .job-list {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
+  max-width: 800px;
   gap: 32px;
 }
 
 .job-card {
   background-color: #f3f3f3;
   padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  border-radius: 16px;
+}
+
+.job-card-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-card-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.job-card-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.job-card-icon {
+  width: 20px;
+}
+
+.btn {
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border: 2px solid;
+  border-radius: 32px;
+  cursor: pointer;
+  min-width: 95px;
+  color: #2f2f2f;
+  border-color: #2f2f2f;
+  transition: 400ms;
+}
+
+.btn:hover {
+  background-color: #2f2f2f !important;
+}
+
+.btn-container {
+  display: flex;
+  gap: 16px;
+}
+
+#update-btn {
+  background-color: #8adcb4;
+}
+
+#update-btn:hover {
+  color: #8adcb4;
+}
+
+#edit-btn {
+  background-color: #d7b4f1;
+}
+
+#edit-btn:hover {
+  color: #d7b4f1;
+}
+
+#delete-btn {
+  background-color: #fea3b2;
+}
+
+#delete-btn:hover {
+  color: #fea3b2;
+}
+
+/* MOBILE STYLING */
+@media only screen and (max-width: 768px) {
+  .banner-heading {
+    font-size: 32px;
+  }
+
+  .job-listing-section {
+    flex-direction: column;
+  }
+
+  .btn-container {
+    flex-direction: column;
+  }
+
+  .btn {
+    min-width: none;
+    width: 100%;
+  }
+
+  .job-card-date {
+    font-size: 14px;
+  }
 }

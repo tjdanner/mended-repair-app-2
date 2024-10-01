@@ -1,3 +1,7 @@
+import userIcon from "/assets/user-svgrepo-com.svg";
+import phoneIcon from "/assets/phone-svgrepo-com.svg";
+import emailIcon from "/assets/envelope-svgrepo-com.svg";
+
 const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
   // Helper function to format the date
   const formatDateString = (dateString) => {
@@ -20,23 +24,63 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
 
   return (
     <div className="job-card">
-      <p>Date Opened: {formatDateString(job.created_at)}</p>
-      <p>Last Modified: {formatDateString(job.last_modified)}</p>
-      <p>{job.name || "No name provided"}</p>
-      <p>{job.number || "No phone number provided"}</p>
-      <p>{job.email || "No email provided"}</p>
-      <p>{job.machine_type || "No machine type specified"}</p>
-      <p>
-        {serviceTypes.length > 0
-          ? serviceTypes.join(", ")
-          : "No service type specified"}
-      </p>
-      <p>{job.notes || "No additional notes."}</p>
-      <button onClick={() => updateJobStatus(job.id, job.completed)}>
-        {job.completed ? "Reopen Job" : "Mark as Complete"}
-      </button>
-      <button onClick={() => editJob(job)}>Edit</button>
-      <button onClick={() => deleteJob(job.id)}>Delete</button>
+
+      <div id="dates" className="job-card-group">
+        <div className="job-card-line">
+          <span className="job-card-label">Date Created:</span>
+          <p id="job-card-date-opened" className="job-card-date">{formatDateString(job.created_at)}</p>
+        </div>
+        <div className="job-card-line">
+          <span className="job-card-label">Last Modified:</span>
+          <p id="job-card-last-modified" className="job-card-date">{formatDateString(job.last_modified)}</p>
+        </div>
+      </div>
+
+      <div id="contact-details" className="job-card-group">
+        <h3>Contact Details:</h3>
+        <div className="job-card-line">
+          <img className="job-card-icon" src={userIcon} alt="user-icon" />
+          <p id="job-card-name">{job.name || "No name provided"}</p>
+        </div>
+        <div className="job-card-line">
+          <img className="job-card-icon" src={phoneIcon} alt="user-icon" />
+          <p id="job-card-number">{job.number || "No phone number provided"}</p>
+        </div>
+        <div className="job-card-line">
+          <img className="job-card-icon" src={emailIcon} alt="user-icon" />
+          <p id="job-card-email">{job.email || "No email provided"}</p>
+        </div>
+      </div>
+
+      <div id="service-details" className="job-card-group">
+        <h3>Service Details</h3>
+        <div className="job-card-line">
+          <span className="job-card-label">Machine Type:</span>
+          <p id="job-card-machine-type">{job.machine_type || "No machine type specified"}</p>
+        </div>
+        <div className="job-card-line">
+          <span className="job-card-label">Service Type:</span>
+          <p id="job-card-service-type">
+            {serviceTypes.length > 0
+              ? serviceTypes.join(" & ")
+              : "No service type specified"}
+          </p>
+        </div>
+      </div>
+
+      <div id="service-notes" className="job-card-group">
+        <h3>Notes:</h3>
+        <p id="job-card-">{job.notes || "No additional notes."}</p>
+      </div>
+
+      <div className="btn-container">
+        <button id="update-btn" className="btn" onClick={() => updateJobStatus(job.id, job.completed)}>
+          {job.completed ? "Reopen Job" : "Mark as Complete"}
+        </button>
+        <button id="edit-btn" className="btn" onClick={() => editJob(job)}>Edit</button>
+        <button id="delete-btn" className="btn" onClick={() => deleteJob(job.id)}>Delete</button>
+      </div>
+
     </div>
   );
 };
