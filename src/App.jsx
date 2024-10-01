@@ -62,6 +62,7 @@ const App = () => {
       ...formData,
       service_type: formData.service_type,
       completed: editingJob ? editingJob.completed : false,
+      last_modified: new Date().toISOString(),
     };
 
     try {
@@ -151,10 +152,7 @@ const App = () => {
       notes: notes || "",
     });
 
-    setEditingJob({
-      ...job,
-      last_modified: new Date().toISOString()
-    });
+    setEditingJob(job);
 
     formTop.scrollIntoView({ behavior: 'smooth' });
   };
