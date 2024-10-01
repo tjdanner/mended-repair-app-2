@@ -16,11 +16,26 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
 
   const serviceTypes = [];
 
-  // Check if service_type exists before accessing its properties
   if (job.service_type) {
     if (job.service_type.repair) serviceTypes.push("Repair");
     if (job.service_type.cleaning) serviceTypes.push("Cleaning");
   }
+
+  const formatPhoneNumber = (number) => {
+    const numberStr = String(number);
+
+    const cleaned = numberStr.replace(/\D/g, "");
+
+    if (cleaned.length !== 10) {
+      console.error("Phone number must be 10 digits.");
+      return numberStr;
+    }
+
+    const areaCode = cleaned.slice(0, 3);
+    const centralOfficeCode = cleaned.slice(3, 6);
+    const lineNumber = cleaned.slice(6);
+    return `(${areaCode}) ${centralOfficeCode}-${lineNumber}`;
+  };
 
   return (
     <div className="job-card">
@@ -44,7 +59,7 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob }) => {
         </div>
         <div className="job-card-line">
           <img className="job-card-icon" src={phoneIcon} alt="user-icon" />
-          <p id="job-card-number">{job.number || "No phone number provided"}</p>
+          <p id="job-card-number">{formatPhoneNumber(job.number) || "No phone number provided"}</p>
         </div>
         <div className="job-card-line">
           <img className="job-card-icon" src={emailIcon} alt="user-icon" />

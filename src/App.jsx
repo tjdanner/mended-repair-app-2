@@ -33,6 +33,10 @@ const App = () => {
     };
 
     fetchJobs();
+
+    const intervalId = setInterval(fetchJobs, 5000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleInputChange = (e) => {
@@ -48,6 +52,7 @@ const App = () => {
       }));
 
     } else {
+
       setFormData((prevState) => ({
         ...prevState,
         [name]: type === "checkbox" ? checked : value,
@@ -107,7 +112,6 @@ const App = () => {
       console.error("Failed to save job:", error);
     }
   };
-
 
   const updateJobStatus = async (jobId, currentStatus) => {
     const updatedStatus = !currentStatus;
