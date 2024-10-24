@@ -121,11 +121,11 @@ textarea {
   gap: 32px;
 }
 
-.all-jobs-section {
+/* .all-jobs-section {
   display: flex;
   flex-wrap: wrap;
   gap: 32px;
-}
+} */
 
 .heading-btn-container {
   display: flex;
@@ -222,6 +222,23 @@ textarea {
   justify-content: right;
   gap: 8px;
   background-color: #f3f3f3;
+}
+
+.search-container,
+.sort-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  border-radius: 32px;
+  padding: 8px 16px;
+  width: 100%;
 }
 
 /* MOBILE STYLING */

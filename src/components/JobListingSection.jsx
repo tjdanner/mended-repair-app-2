@@ -1,26 +1,38 @@
 import React, { useState, useRef } from "react";
 import JobList from "./JobList";
-import FullWidthJobList from "./FullWidthJobList"; // Import the new component
+// FullWidthJobList is not used yet, so keep it commented out for now
+// import FullWidthJobList from "./FullWidthJobList"; 
 
 const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
   const inProgressJobs = jobs.filter(job => !job.completed);
   const completedJobs = jobs.filter(job => job.completed);
 
-  const [showAllJobs, setShowAllJobs] = useState(false); // Control showing the full-width component
-  const [allJobs, setAllJobs] = useState([]); // State to store all jobs to show
+  const [showInProgress, setShowInProgress] = useState(false); // State for in-progress jobs
+  const [showCompleted, setShowCompleted] = useState(false); // State for completed jobs
+  const [allJobs, setAllJobs] = useState([]); // State to store all jobs to show in full-width view
   const fullWidthRef = useRef(null); // Reference for the full-width section
   const topRef = useRef(null); // Reference for scrolling back to top
 
-  const handleViewAll = (jobsToShow) => {
+  const handleViewAll = (jobsToShow, type) => {
     setAllJobs(jobsToShow); // Update the jobs to show
-    setShowAllJobs(true);
+
+    // Expand the selected section and collapse the other
+    if (type === "inProgress") {
+      setShowInProgress(true);
+      setShowCompleted(false);
+    } else if (type === "completed") {
+      setShowInProgress(false);
+      setShowCompleted(true);
+    }
+
     setTimeout(() => {
       fullWidthRef.current.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to the full-width section
     }, 100);
   };
 
   const handleCloseViewAll = () => {
-    setShowAllJobs(false);
+    setShowInProgress(false);
+    setShowCompleted(false);
     topRef.current.scrollIntoView({ behavior: "smooth" }); // Scroll back to top
   };
 
@@ -33,8 +45,8 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
           updateJobStatus={updateJobStatus}
           editJob={editJob}
           deleteJob={deleteJob}
-          onViewAll={() => handleViewAll(inProgressJobs)} // Pass in-progress jobs
-          showAll={showAllJobs} // Pass showAll state to control the display
+          onViewAll={() => handleViewAll(inProgressJobs, "inProgress")} // Handle expanding in-progress jobs
+          showAll={showInProgress} // Control visibility for in-progress jobs
         />
         <JobList
           heading={"Completed Jobs"}
@@ -42,23 +54,12 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
           updateJobStatus={updateJobStatus}
           editJob={editJob}
           deleteJob={deleteJob}
-          onViewAll={() => handleViewAll(completedJobs)} // Pass completed jobs
-          showAll={showAllJobs} // Pass showAll state to control the display
+          onViewAll={() => handleViewAll(completedJobs, "completed")} // Handle expanding completed jobs
+          showAll={showCompleted} // Control visibility for completed jobs
         />
       </section>
 
-      {/* Render the FullWidthJobList outside of the job-listing-section */}
-      {showAllJobs && (
-        <div ref={fullWidthRef} className="full-width-job-list">
-          <FullWidthJobList
-            jobs={allJobs} // Pass the selected jobs to show
-            updateJobStatus={updateJobStatus}
-            editJob={editJob}
-            deleteJob={deleteJob}
-            closeViewAll={handleCloseViewAll} // Close button handler
-          />
-        </div>
-      )}
+      {/* Skip FullWidthJobList rendering */}
     </>
   );
 };
