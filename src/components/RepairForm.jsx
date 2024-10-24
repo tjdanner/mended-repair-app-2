@@ -1,4 +1,4 @@
-const Form = ({ formData, handleInputChange, handleSubmit }) => {
+const RepairForm = ({ formData, handleInputChange, handleSubmit }) => {
   return (
     <form onSubmit={handleSubmit} className="repair-form">
       <div className="form-group">
@@ -88,4 +88,4 @@ const Form = ({ formData, handleInputChange, handleSubmit }) => {
     </form>
   );
 };
-export default Form;
+export default RepairForm;

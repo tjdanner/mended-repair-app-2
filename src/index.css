@@ -43,7 +43,8 @@ p {
   justify-content: center;
 }
 
-.repair-form {
+.repair-form,
+.login-form {
   width: 500px;
   padding: 32px;
   background-color: #f3f3f3;
@@ -113,6 +114,24 @@ textarea {
   gap: 32px;
 }
 
+.full-width-job-list {
+  padding: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.all-jobs-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.heading-btn-container {
+  display: flex;
+  gap: 16px;
+}
+
 .job-card {
   background-color: #f3f3f3;
   padding: 32px;
@@ -120,6 +139,12 @@ textarea {
   flex-direction: column;
   gap: 32px;
   border-radius: 16px;
+}
+
+.job-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .job-card-group {
@@ -159,6 +184,7 @@ textarea {
 
 .btn:hover {
   background-color: #2f2f2f !important;
+  color: #d7b4f1;
 }
 
 .btn-container {
@@ -188,6 +214,14 @@ textarea {
 
 #delete-btn:hover {
   color: #fea3b2;
+}
+
+.header {
+  display: flex;
+  padding: 8px;
+  justify-content: right;
+  gap: 8px;
+  background-color: #f3f3f3;
 }
 
 /* MOBILE STYLING */

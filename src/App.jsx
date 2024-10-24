@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
+
 import { supabase } from "./supabaseClient";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+
 import Banner from "./components/Banner";
 import FormSection from "./components/FormSection";
 import JobListingSection from "./components/JobListingSection";
+import Header from "./components/Header";
+import LoginForm from "./components/LoginForm";
+
 
 const App = () => {
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [session, setSession] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
@@ -21,23 +30,117 @@ const App = () => {
   const [editingJob, setEditingJob] = useState(null);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      const { data, error } = await supabase
-        .from("jobs")
-        .select('*');
-      if (error) {
-        console.error("Error fetching jobs:", error);
-      } else {
-        setJobs(data);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        fetchJobs();
+        subscribeToJobs();
       }
-    };
+    });
 
-    fetchJobs();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+      if (newSession) {
+        fetchJobs();
+        subscribeToJobs();
+      }
+    });
 
-    const intervalId = setInterval(fetchJobs, 5000);
-
-    return () => clearInterval(intervalId);
+    return () => subscription.unsubscribe();
   }, []);
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error('Error signing in:', error);
+    } else {
+      console.log("Sign-in successful:", data);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
+      console.error("Error signing up:", signUpError);
+      return;
+    }
+
+    if (signUpData?.user) {
+      if (signUpData.user?.email_confirmed_at) {
+        setSession(signUpData.session);
+      } else {
+        console.log('Please check your email to confirm your account.');
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error('Error logging out:', error);
+    } else {
+      setSession(null);  // Clear the session state on successful logout
+    }
+  };
+
+  const fetchJobs = async () => {
+    const { data, error } = await supabase.from('jobs').select('*');
+    if (error) {
+      console.error('Error fetching jobs:', error);
+    } else {
+      setJobs(data);
+    }
+  };
+
+  const subscribeToJobs = () => {
+    const channel = supabase
+      .channel('jobs-channel')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'jobs',
+      }, (payload) => {
+        switch (payload.eventType) {
+          case 'INSERT':
+            setJobs((prevJobs) => [...prevJobs, payload.new]);
+            break;
+          case 'UPDATE':
+            setJobs((prevJobs) =>
+              prevJobs.map((job) =>
+                job.id === payload.new.id ? payload.new : job
+              )
+            );
+            break;
+          case 'DELETE':
+            setJobs((prevJobs) =>
+              prevJobs.filter((job) => job.id !== payload.old.id)
+            );
+            break;
+          default:
+            break;
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -89,11 +192,10 @@ const App = () => {
         const { data, error } = await supabase
           .from("jobs")
           .insert([jobData])
-          .select(); // Retrieves the inserted job with the auto-generated ID
+          .select();
 
         if (error) throw error;
 
-        // Use the actual ID returned by Supabase (int8 auto-increment)
         setJobs((prevJobs) => [...prevJobs, data[0]]);
       }
 
@@ -183,21 +285,39 @@ const App = () => {
     }
   };
 
-  return (
-    <>
-      <Banner />
-      <FormSection
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-      />
-      <JobListingSection
-        jobs={jobs}
-        updateJobStatus={updateJobStatus}
-        editJob={editJob}
-        deleteJob={deleteJob}
-      />
-    </>
-  );
+  if (!session) {
+    return (
+      <>
+        <LoginForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
+          handleSignIn={handleSignIn}
+          handleSignUp={handleSignUp}
+        />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Header
+          handleLogout={handleLogout}
+        />
+        <Banner />
+        <FormSection
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+        />
+        <JobListingSection
+          jobs={jobs}
+          updateJobStatus={updateJobStatus}
+          editJob={editJob}
+          deleteJob={deleteJob}
+        />
+      </>
+    );
+  }
 };
 export default App;

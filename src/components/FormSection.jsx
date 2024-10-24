@@ -1,9 +1,9 @@
-import Form from "./Form";
+import RepairForm from "./RepairForm";
 
 const FormSection = ({ formData, handleInputChange, handleSubmit }) => {
   return (
     <section className="form-section">
-      <Form
+      <RepairForm
         formData={formData}
         handleInputChange={handleInputChange}
         handleSubmit={handleSubmit}
