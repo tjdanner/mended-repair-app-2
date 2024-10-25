@@ -68,9 +68,8 @@ const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob }) => {
           onChange={handleSearchChange}
         />
         <div className="sort-container">
-          <label htmlFor="sortSelect">Sort by:</label>
-          <select id="sortSelect" value={sortOption} onChange={handleSortChange}>
-            <option value="">Select</option>
+          <select id="sortSelect" value={sortOption} onChange={handleSortChange} placeholder="SORT">
+            <option className="placeholder-text" value="">Sort by</option>
             <option value="creation-asc">Creation Date (Ascending)</option>
             <option value="creation-desc">Creation Date (Descending)</option>
             <option value="modified-asc">Last Modified (Ascending)</option>
