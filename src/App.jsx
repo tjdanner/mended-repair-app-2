@@ -21,6 +21,7 @@ const App = () => {
     number: "",
     email: "",
     machine_type: "",
+    serial_num: "",
     service_type: {
       repair: false,
       cleaning: false
@@ -103,6 +104,7 @@ const App = () => {
     if (error) {
       console.error('Error fetching jobs:', error);
     } else {
+      console.log("fetched jobs:", data);
       setJobs(data);
     }
   };
@@ -204,6 +206,7 @@ const App = () => {
         number: "",
         email: "",
         machine_type: "",
+        serial_num: "",
         service_type: {
           repair: false,
           cleaning: false
@@ -242,7 +245,7 @@ const App = () => {
   };
 
   const editJob = (job) => {
-    const { name, number, email, machine_type, service_type, notes } = job;
+    const { name, number, email, machine_type, serial_num, service_type, notes } = job;
 
     const formTop = document.querySelector(".form-section");
 
@@ -251,6 +254,7 @@ const App = () => {
       number: number || "",
       email: email || "",
       machine_type: machine_type || "",
+      serial_num: serial_num || "",
       service_type: {
         repair: service_type?.repair || false,
         cleaning: service_type?.cleaning || false,

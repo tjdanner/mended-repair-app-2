@@ -141,6 +141,12 @@ textarea {
   border-radius: 16px;
 }
 
+#collapsed-view {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
 .job-card-header {
   display: flex;
   align-items: center;
@@ -240,10 +246,6 @@ textarea {
 
 .sort-container {
   width: 40%;
-}
-
-.placeholder-text {
-  color: #888888;
 }
 
 /* MOBILE STYLING */

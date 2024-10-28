@@ -54,8 +54,17 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
 
       {!isExpanded && (
         <div id="collapsed-view">
-          <p>Service: {serviceTypes.length > 0 ? serviceTypes.join(" & ") : "No service type specified"}</p>
-          <p>Date Created: {formatDateString(job.created_at)}</p>
+          <div className="job-card-group">
+            <p>Service: {serviceTypes.length > 0 ? serviceTypes.join(" & ") : "No service type specified"}</p>
+            <p>Date Created: {formatDateString(job.created_at)}</p>
+          </div>
+          <div className="btn-container">
+            <button id="update-btn" className="btn" onClick={() => updateJobStatus(job.id, job.completed)}>
+              {job.completed ? "Reopen Job" : "Mark as Complete"}
+            </button>
+            <button id="edit-btn" className="btn" onClick={() => editJob(job)}>Edit</button>
+            <button id="delete-btn" className="btn" onClick={() => deleteJob(job.id)}>Delete</button>
+          </div>
         </div>
       )}
 
@@ -97,6 +106,10 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
             <div className="job-card-line">
               <span className="job-card-label">Machine Type:</span>
               <p id="job-card-machine-type">{job.machine_type || "No machine type specified"}</p>
+            </div>
+            <div className="job-card-line">
+              <span className="job-card-label">Serial Number:</span>
+              <p id="job-card-serial_num">{job.serial_num || "No serial number provided"}</p>
             </div>
             <div className="job-card-line">
               <span className="job-card-label">Service Type:</span>

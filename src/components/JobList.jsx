@@ -69,7 +69,7 @@ const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob }) => {
         />
         <div className="sort-container">
           <select id="sortSelect" value={sortOption} onChange={handleSortChange} placeholder="SORT">
-            <option className="placeholder-text" value="">Sort by</option>
+            <option value="">Sort by</option>
             <option value="creation-asc">Creation Date (Ascending)</option>
             <option value="creation-desc">Creation Date (Descending)</option>
             <option value="modified-asc">Last Modified (Ascending)</option>

@@ -49,6 +49,17 @@ const RepairForm = ({ formData, handleInputChange, handleSubmit }) => {
       </div>
 
       <div className="form-group">
+        <label htmlFor="serial_num">Serial Number</label>
+        <input
+          type="text"
+          id="serial_num"
+          name="serial_num"
+          value={formData.serial_num}
+          onChange={handleInputChange}
+        />
+      </div>
+
+      <div className="form-group">
         <label>Service Type:</label>
         <div className="checkbox-container">
           <input
