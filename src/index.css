@@ -43,6 +43,13 @@ p {
   justify-content: center;
 }
 
+.login-form-container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+}
+
 .repair-form,
 .login-form {
   width: 500px;

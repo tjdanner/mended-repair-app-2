@@ -52,31 +52,42 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
+  const handleSignIn = async (email, password) => {
+    // Check if email and password are provided
+    if (!email || !password) {
+      console.error("Email and password must be provided.");
+      return;
+    }
 
+    // Authenticate with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      console.error('Error signing in:', error);
+      console.error("Error signing in:", error.message); // Use error.message for a clearer output
     } else {
       console.log("Sign-in successful:", data);
     }
   };
 
-  const handleSignUp = async (e) => {
-    e.preventDefault();
 
+  const handleSignUp = async (email, password) => {
+    // Check if email and password are provided
+    if (!email || !password) {
+      console.error("Email and password must be provided.");
+      return;
+    }
+
+    // Sign up with Supabase
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (signUpError) {
-      console.error("Error signing up:", signUpError);
+      console.error("Error signing up:", signUpError.message); // Use error.message for a clearer output
       return;
     }
 
@@ -84,10 +95,11 @@ const App = () => {
       if (signUpData.user?.email_confirmed_at) {
         setSession(signUpData.session);
       } else {
-        console.log('Please check your email to confirm your account.');
+        console.log("Please check your email to confirm your account.");
       }
     }
   };
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
