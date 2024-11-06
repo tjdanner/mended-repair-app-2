@@ -1,9 +1,10 @@
-const Header = ({ handleLogout }) => {
+const Header = ({ handleLogout, userEmail }) => {
+
+  const username = userEmail.split('@')[0];
   return (
     <>
       <div className="header">
-        {/* <button onClick={handleLogout} className="btn">Change Password</button>
-        <button onClick={handleLogout} className="btn">Change Email</button> */}
+        <span>Welcome, {username}</span>
         <button onClick={handleLogout} className="btn">Log Out</button>
       </div>
     </>

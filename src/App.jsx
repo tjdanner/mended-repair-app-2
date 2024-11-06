@@ -100,6 +100,19 @@ const App = () => {
     }
   };
 
+  const handleForgotPassword = async (email) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) {
+        console.error("Error sending password reset email:", error.message);
+      } else {
+        console.log("Password reset email sent successfully.");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -180,11 +193,17 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const currentUser = supabase.auth.user(); // Get the current authenticated user
+    const userEmail = currentUser ? currentUser.email : "Unknown"; // Get email of logged-in user
+
     const jobData = {
       ...formData,
       service_type: formData.service_type,
       completed: editingJob ? editingJob.completed : false,
       last_modified: new Date().toISOString(),
+      last_modified_by: userEmail, // Add user email for tracking changes
+      created_by: editingJob ? editingJob.created_by : userEmail, // If editing, keep original creator
+      created_at: editingJob ? editingJob.created_at : new Date().toISOString(), // Keep original created_at
     };
 
     try {
@@ -192,7 +211,7 @@ const App = () => {
         const { error } = await supabase
           .from("jobs")
           .update(jobData)
-          .eq('id', editingJob.id);
+          .eq("id", editingJob.id);
 
         if (error) throw error;
 
@@ -221,9 +240,9 @@ const App = () => {
         serial_num: "",
         service_type: {
           repair: false,
-          cleaning: false
+          cleaning: false,
         },
-        notes: ""
+        notes: "",
       });
     } catch (error) {
       console.error("Failed to save job:", error);
@@ -311,6 +330,7 @@ const App = () => {
           setPassword={setPassword}
           handleSignIn={handleSignIn}
           handleSignUp={handleSignUp}
+          handleForgotPassword={handleForgotPassword}
         />
       </>
     );
@@ -319,6 +339,7 @@ const App = () => {
       <>
         <Header
           handleLogout={handleLogout}
+          userEmail={session.user.email}
         />
         <Banner />
         <FormSection
