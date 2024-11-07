@@ -193,17 +193,11 @@ const App = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const currentUser = supabase.auth.user(); // Get the current authenticated user
-    const userEmail = currentUser ? currentUser.email : "Unknown"; // Get email of logged-in user
-
     const jobData = {
       ...formData,
       service_type: formData.service_type,
       completed: editingJob ? editingJob.completed : false,
       last_modified: new Date().toISOString(),
-      last_modified_by: userEmail, // Add user email for tracking changes
-      created_by: editingJob ? editingJob.created_by : userEmail, // If editing, keep original creator
-      created_at: editingJob ? editingJob.created_at : new Date().toISOString(), // Keep original created_at
     };
 
     try {

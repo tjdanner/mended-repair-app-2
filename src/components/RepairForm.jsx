@@ -36,16 +36,13 @@ const RepairForm = ({ formData, handleInputChange, handleSubmit }) => {
 
       <div className="form-group">
         <label htmlFor="machine_type">Machine Type</label>
-        <select
+        <input
+          type="text"
           id="machine_type"
           name="machine_type"
           value={formData.machine_type}
           onChange={handleInputChange}
-        >
-          <option value=""></option>
-          <option value="M7">M7</option>
-          <option value="Skyline">Skyline</option>
-        </select>
+        />
       </div>
 
       <div className="form-group">
