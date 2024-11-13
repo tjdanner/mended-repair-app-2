@@ -1,3 +1,4 @@
+// src/components/LoginForm.jsx
 import React, { useState } from "react";
 
 const LoginForm = ({ handleSignIn, handleSignUp, handleForgotPassword }) => {

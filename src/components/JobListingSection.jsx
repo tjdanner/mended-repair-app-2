@@ -1,9 +1,7 @@
 import React, { useState, useRef } from "react";
 import JobList from "./JobList";
-// FullWidthJobList is not used yet, so keep it commented out for now
-// import FullWidthJobList from "./FullWidthJobList"; 
 
-const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
+const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob, jobRefs }) => {
   const inProgressJobs = jobs.filter(job => !job.completed);
   const completedJobs = jobs.filter(job => job.completed);
 
@@ -45,6 +43,7 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
           updateJobStatus={updateJobStatus}
           editJob={editJob}
           deleteJob={deleteJob}
+          jobRefs={jobRefs}
           onViewAll={() => handleViewAll(inProgressJobs, "inProgress")} // Handle expanding in-progress jobs
           showAll={showInProgress} // Control visibility for in-progress jobs
         />
@@ -54,6 +53,7 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob }) => {
           updateJobStatus={updateJobStatus}
           editJob={editJob}
           deleteJob={deleteJob}
+          jobRefs={jobRefs}
           onViewAll={() => handleViewAll(completedJobs, "completed")} // Handle expanding completed jobs
           showAll={showCompleted} // Control visibility for completed jobs
         />

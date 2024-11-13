@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-
 import Banner from "./components/Banner";
 import FormSection from "./components/FormSection";
 import JobListingSection from "./components/JobListingSection";
 import Header from "./components/Header";
 import LoginForm from "./components/LoginForm";
-
+import Notification from "./components/Notification";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const App = () => {
   const [email, setEmail] = useState("");
@@ -21,6 +20,7 @@ const App = () => {
     number: "",
     email: "",
     machine_type: "",
+    brand: "", // Add brand field
     serial_num: "",
     service_type: {
       repair: false,
@@ -29,6 +29,11 @@ const App = () => {
     notes: ""
   });
   const [editingJob, setEditingJob] = useState(null);
+  const [notification, setNotification] = useState({ message: "", type: "" });
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const jobRefs = useRef({});
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,49 +58,45 @@ const App = () => {
   }, []);
 
   const handleSignIn = async (email, password) => {
-    // Check if email and password are provided
     if (!email || !password) {
-      console.error("Email and password must be provided.");
+      setNotification({ message: "Email and password must be provided.", type: "error" });
       return;
     }
 
-    // Authenticate with Supabase
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      console.error("Error signing in:", error.message); // Use error.message for a clearer output
+      setNotification({ message: `Error signing in: ${error.message}`, type: "error" });
     } else {
-      console.log("Sign-in successful:", data);
+      setNotification({ message: "Sign-in successful.", type: "success" });
     }
   };
 
-
   const handleSignUp = async (email, password) => {
-    // Check if email and password are provided
     if (!email || !password) {
-      console.error("Email and password must be provided.");
+      setNotification({ message: "Email and password must be provided.", type: "error" });
       return;
     }
 
-    // Sign up with Supabase
     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (signUpError) {
-      console.error("Error signing up:", signUpError.message); // Use error.message for a clearer output
+      setNotification({ message: `Error signing up: ${signUpError.message}`, type: "error" });
       return;
     }
 
     if (signUpData?.user) {
       if (signUpData.user?.email_confirmed_at) {
         setSession(signUpData.session);
+        setNotification({ message: "Sign-up successful.", type: "success" });
       } else {
-        console.log("Please check your email to confirm your account.");
+        setNotification({ message: "Please check your email to confirm your account.", type: "info" });
       }
     }
   };
@@ -104,32 +105,31 @@ const App = () => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email);
       if (error) {
-        console.error("Error sending password reset email:", error.message);
+        setNotification({ message: `Error sending password reset email: ${error.message}`, type: "error" });
       } else {
-        console.log("Password reset email sent successfully.");
+        setNotification({ message: "Password reset email sent successfully.", type: "success" });
       }
     } catch (err) {
-      console.error("Error:", err);
+      setNotification({ message: `Error: ${err.message}`, type: "error" });
     }
   };
-
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      console.error('Error logging out:', error);
+      setNotification({ message: `Error logging out: ${error.message}`, type: "error" });
     } else {
-      setSession(null);  // Clear the session state on successful logout
+      setSession(null);
+      setNotification({ message: "Logged out successfully.", type: "success" });
     }
   };
 
   const fetchJobs = async () => {
     const { data, error } = await supabase.from('jobs').select('*');
     if (error) {
-      console.error('Error fetching jobs:', error);
+      setNotification({ message: `Error fetching jobs: ${error.message}`, type: "error" });
     } else {
-      console.log("fetched jobs:", data);
       setJobs(data);
     }
   };
@@ -180,14 +180,12 @@ const App = () => {
           [value]: checked,
         },
       }));
-
     } else {
-
       setFormData((prevState) => ({
         ...prevState,
         [name]: type === "checkbox" ? checked : value,
       }));
-    };
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -198,6 +196,8 @@ const App = () => {
       service_type: formData.service_type,
       completed: editingJob ? editingJob.completed : false,
       last_modified: new Date().toISOString(),
+      created_by: session.user.email.split('@')[0],
+      modified_by: session.user.email.split('@')[0],
     };
 
     try {
@@ -215,6 +215,12 @@ const App = () => {
           )
         );
         setEditingJob(null);
+        setNotification({ message: "Job updated successfully.", type: "success" });
+
+        // Scroll to the updated job card
+        setTimeout(() => {
+          jobRefs.current[editingJob.id]?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
       } else {
         const { data, error } = await supabase
           .from("jobs")
@@ -224,6 +230,7 @@ const App = () => {
         if (error) throw error;
 
         setJobs((prevJobs) => [...prevJobs, data[0]]);
+        setNotification({ message: "Job created successfully.", type: "success" });
       }
 
       setFormData({
@@ -231,6 +238,7 @@ const App = () => {
         number: "",
         email: "",
         machine_type: "",
+        brand: "", // Reset brand field
         serial_num: "",
         service_type: {
           repair: false,
@@ -239,10 +247,9 @@ const App = () => {
         notes: "",
       });
     } catch (error) {
-      console.error("Failed to save job:", error);
+      setNotification({ message: `Failed to save job: ${error.message}`, type: "error" });
     }
   };
-
   const updateJobStatus = async (jobId, currentStatus) => {
     const updatedStatus = !currentStatus;
 
@@ -256,21 +263,19 @@ const App = () => {
         throw new Error("Failed to update job status: " + error.message);
       }
 
-      console.log(`Job ${jobId} marked as ${updatedStatus ? "completed" : "in progress"} in Supabase.`);
-
-      // Update local state
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
           job.id === jobId ? { ...job, completed: updatedStatus } : job
         )
       );
+      setNotification({ message: `Job ${updatedStatus ? "completed" : "reopened"} successfully.`, type: "success" });
     } catch (error) {
-      console.error("Error updating job status:", error);
+      setNotification({ message: `Error updating job status: ${error.message}`, type: "error" });
     }
   };
 
   const editJob = (job) => {
-    const { name, number, email, machine_type, serial_num, service_type, notes } = job;
+    const { name, number, email, machine_type, brand, serial_num, service_type, notes } = job;
 
     const formTop = document.querySelector(".form-section");
 
@@ -279,6 +284,7 @@ const App = () => {
       number: number || "",
       email: email || "",
       machine_type: machine_type || "",
+      brand: brand || "", // Set brand field
       serial_num: serial_num || "",
       service_type: {
         repair: service_type?.repair || false,
@@ -294,8 +300,6 @@ const App = () => {
 
   const deleteJob = async (id) => {
     try {
-      console.log("Deleting job with ID:", id);
-
       const { error } = await supabase
         .from("jobs")
         .delete()
@@ -305,18 +309,17 @@ const App = () => {
         throw new Error("Failed to delete job: " + error.message);
       }
 
-      console.log(`Job ${id} deleted from Supabase.`);
-
       setJobs((prevJobs) => prevJobs.filter((job) => job.id !== id));
-
+      setNotification({ message: "Job deleted successfully.", type: "success" });
     } catch (error) {
-      console.error("Error deleting job:", error);
+      setNotification({ message: `Error deleting job: ${error.message}`, type: "error" });
     }
   };
 
   if (!session) {
     return (
       <>
+        <Notification message={notification.message} type={notification.type} />
         <LoginForm
           email={email}
           setEmail={setEmail}
@@ -331,6 +334,7 @@ const App = () => {
   } else {
     return (
       <>
+        <Notification message={notification.message} type={notification.type} />
         <Header
           handleLogout={handleLogout}
           userEmail={session.user.email}
@@ -346,9 +350,12 @@ const App = () => {
           updateJobStatus={updateJobStatus}
           editJob={editJob}
           deleteJob={deleteJob}
+          username={session.user.email.split('@')[0]}
+          jobRefs={jobRefs}
         />
       </>
     );
   }
 };
+
 export default App;

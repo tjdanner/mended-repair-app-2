@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import userIcon from "/assets/user-svgrepo-com.svg";
 import phoneIcon from "/assets/phone-svgrepo-com.svg";
 import emailIcon from "/assets/envelope-svgrepo-com.svg";
 
-const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
+const JobCard = forwardRef(({ job, updateJobStatus, editJob, deleteJob, expandAll }, ref) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Sync local isExpanded state with the expandAll prop from the parent
@@ -44,9 +44,9 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
   };
 
   return (
-    <div className={`job-card ${isExpanded ? "expanded" : "collapsed"}`}>
+    <div ref={ref} className={`job-card ${isExpanded ? "expanded" : "collapsed"}`}>
       <div className="job-card-header">
-        <h3>{job.name || "No name provided"}</h3>
+        <h3>{job.name || "Unknown"}</h3>
         <button className="toggle-btn btn" onClick={() => setIsExpanded(!isExpanded)}>
           {isExpanded ? "Collapse" : "Expand"}
         </button>
@@ -56,7 +56,7 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
         <div id="collapsed-view">
           <div className="job-card-group">
             <p>Service: {serviceTypes.length > 0 ? serviceTypes.join(" & ") : "No service type specified"}</p>
-            <p>Date Created: {formatDateString(job.created_at)}</p>
+            <p>Date Created: {formatDateString(job.created_at)} by {job.created_by}</p>
           </div>
           <div className="btn-container">
             <button id="update-btn" className="btn" onClick={() => updateJobStatus(job.id, job.completed)}>
@@ -74,13 +74,13 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
             <div className="job-card-line">
               <span className="job-card-label">Date Created:</span>
               <p id="job-card-date-opened" className="job-card-date">
-                {formatDateString(job.created_at)}
+                {formatDateString(job.created_at)} by {job.created_by}
               </p>
             </div>
             <div className="job-card-line">
               <span className="job-card-label">Last Modified:</span>
               <p id="job-card-last-modified" className="job-card-date">
-                {formatDateString(job.last_modified)}
+                {formatDateString(job.last_modified)} by {job.modified_by}
               </p>
             </div>
           </div>
@@ -89,7 +89,7 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
             <h3>Contact Details:</h3>
             <div className="job-card-line">
               <img className="job-card-icon" src={userIcon} alt="user-icon" />
-              <p id="job-card-name">{job.name || "No name provided"}</p>
+              <p id="job-card-name">{job.name || "Unknown"}</p>
             </div>
             <div className="job-card-line">
               <img className="job-card-icon" src={phoneIcon} alt="user-icon" />
@@ -137,6 +137,6 @@ const JobCard = ({ job, updateJobStatus, editJob, deleteJob, expandAll }) => {
       )}
     </div>
   );
-};
+});
 
 export default JobCard;

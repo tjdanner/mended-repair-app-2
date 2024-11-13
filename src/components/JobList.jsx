@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import JobCard from "./JobCard";
 
-const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob }) => {
+const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob, jobRefs }) => {
   const [showAllState, setShowAllState] = useState(false); // State to track showing all jobs
   const [searchQuery, setSearchQuery] = useState(''); // State to track the search input
   const [sortOption, setSortOption] = useState(''); // State to track the selected sort option
@@ -78,9 +78,6 @@ const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob }) => {
         </div>
       </div>
 
-      {/* Sorting Dropdown */}
-
-
       {/* Display the appropriate jobs based on the search and sort options */}
       {displayedJobs.length > 0 ? (
         displayedJobs.map(job => (
@@ -90,6 +87,7 @@ const JobList = ({ heading, jobs, updateJobStatus, editJob, deleteJob }) => {
             updateJobStatus={updateJobStatus}
             editJob={editJob}
             deleteJob={deleteJob}
+            ref={(el) => (jobRefs.current[job.id] = el)}
           />
         ))
       ) : (
