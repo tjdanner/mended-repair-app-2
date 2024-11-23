@@ -7,6 +7,7 @@ import JobListingSection from "./components/JobListingSection";
 import Header from "./components/Header";
 import LoginForm from "./components/LoginForm";
 import Notification from "./components/Notification";
+import PasswordReset from "./components/PasswordReset"; // Import PasswordReset
 import { useLocation, useNavigate } from "react-router-dom";
 
 const App = () => {
@@ -407,6 +408,7 @@ const App = () => {
           username={session.user.email.split('@')[0]}
           jobRefs={jobRefs}
         />
+        <PasswordReset /> {/* Add PasswordReset component */}
       </>
     );
   }
