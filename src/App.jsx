@@ -1,7 +1,6 @@
+// src/App.jsx
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "./supabaseClient";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Banner from "./components/Banner";
 import FormSection from "./components/FormSection";
 import JobListingSection from "./components/JobListingSection";
@@ -20,16 +19,18 @@ const App = () => {
     number: "",
     email: "",
     machine_type: "",
-    brand: "", // Add brand field
+    brand: "",
     serial_num: "",
     service_type: {
       repair: false,
-      cleaning: false
+      cleaning: false,
     },
-    notes: ""
+    notes: "",
+    image_url: "", // Add image_url field
   });
   const [editingJob, setEditingJob] = useState(null);
   const [notification, setNotification] = useState({ message: "", type: "" });
+  const [isUploading, setIsUploading] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -188,8 +189,57 @@ const App = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `public/${fileName}`;
+
+    console.log(`Uploading file to path: ${filePath}`);
+
+    let { error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error(`Error uploading image: ${uploadError.message}`);
+      setNotification({ message: `Error uploading image: ${uploadError.message}`, type: "error" });
+      setIsUploading(false);
+      return;
+    }
+
+    const { data, error: urlError } = await supabase.storage
+      .from('images')
+      .getPublicUrl(filePath);
+
+    if (urlError) {
+      console.error(`Error getting image URL: ${urlError.message}`);
+      setNotification({ message: `Error getting image URL: ${urlError.message}`, type: "error" });
+      setIsUploading(false);
+      return;
+    }
+
+    console.log(`Image uploaded successfully. Public URL: ${data.publicUrl}`);
+
+    setFormData((prevState) => ({
+      ...prevState,
+      image_url: data.publicUrl,
+    }));
+
+    setIsUploading(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isUploading) {
+      setNotification({ message: "Please wait for the image to finish uploading.", type: "error" });
+      return;
+    }
 
     const jobData = {
       ...formData,
@@ -205,7 +255,8 @@ const App = () => {
         const { error } = await supabase
           .from("jobs")
           .update(jobData)
-          .eq("id", editingJob.id);
+          .eq("id", editingJob.id)
+          .select(); // Ensure select is used correctly
 
         if (error) throw error;
 
@@ -217,7 +268,6 @@ const App = () => {
         setEditingJob(null);
         setNotification({ message: "Job updated successfully.", type: "success" });
 
-        // Scroll to the updated job card
         setTimeout(() => {
           jobRefs.current[editingJob.id]?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
@@ -225,7 +275,7 @@ const App = () => {
         const { data, error } = await supabase
           .from("jobs")
           .insert([jobData])
-          .select();
+          .select(); // Ensure select is used correctly
 
         if (error) throw error;
 
@@ -238,18 +288,20 @@ const App = () => {
         number: "",
         email: "",
         machine_type: "",
-        brand: "", // Reset brand field
+        brand: "",
         serial_num: "",
         service_type: {
           repair: false,
           cleaning: false,
         },
         notes: "",
+        image_url: "", // Reset image URL
       });
     } catch (error) {
       setNotification({ message: `Failed to save job: ${error.message}`, type: "error" });
     }
   };
+
   const updateJobStatus = async (jobId, currentStatus) => {
     const updatedStatus = !currentStatus;
 
@@ -275,7 +327,7 @@ const App = () => {
   };
 
   const editJob = (job) => {
-    const { name, number, email, machine_type, brand, serial_num, service_type, notes } = job;
+    const { name, number, email, machine_type, brand, serial_num, service_type, notes, image_url } = job;
 
     const formTop = document.querySelector(".form-section");
 
@@ -284,13 +336,14 @@ const App = () => {
       number: number || "",
       email: email || "",
       machine_type: machine_type || "",
-      brand: brand || "", // Set brand field
+      brand: brand || "",
       serial_num: serial_num || "",
       service_type: {
         repair: service_type?.repair || false,
         cleaning: service_type?.cleaning || false,
       },
       notes: notes || "",
+      image_url: image_url || "", // Set image_url field
     });
 
     setEditingJob(job);
@@ -344,6 +397,7 @@ const App = () => {
           formData={formData}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
+          handleImageUpload={handleImageUpload} // Pass handleImageUpload
         />
         <JobListingSection
           jobs={jobs}

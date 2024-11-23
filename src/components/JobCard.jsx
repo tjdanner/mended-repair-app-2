@@ -21,13 +21,6 @@ const JobCard = forwardRef(({ job, updateJobStatus, editJob, deleteJob, expandAl
     return `${formattedDate} at ${formattedTime}`;
   };
 
-  const serviceTypes = [];
-
-  if (job.service_type) {
-    if (job.service_type.repair) serviceTypes.push("Repair");
-    if (job.service_type.cleaning) serviceTypes.push("Cleaning");
-  }
-
   const formatPhoneNumber = (number) => {
     const numberStr = String(number);
     const cleaned = numberStr.replace(/\D/g, "");
@@ -43,6 +36,12 @@ const JobCard = forwardRef(({ job, updateJobStatus, editJob, deleteJob, expandAl
     return `(${areaCode}) ${centralOfficeCode}-${lineNumber}`;
   };
 
+  const serviceTypes = [];
+  if (job.service_type) {
+    if (job.service_type.repair) serviceTypes.push("Repair");
+    if (job.service_type.cleaning) serviceTypes.push("Cleaning");
+  }
+
   return (
     <div ref={ref} className={`job-card ${isExpanded ? "expanded" : "collapsed"}`}>
       <div className="job-card-header">
@@ -56,7 +55,7 @@ const JobCard = forwardRef(({ job, updateJobStatus, editJob, deleteJob, expandAl
         <div id="collapsed-view">
           <div className="job-card-group">
             <p>Service: {serviceTypes.length > 0 ? serviceTypes.join(" & ") : "No service type specified"}</p>
-            <p>Date Created: {formatDateString(job.created_at)} by {job.created_by}</p>
+            <p>Date Created: {new Date(job.created_at).toLocaleString()}</p>
           </div>
           <div className="btn-container">
             <button id="update-btn" className="btn" onClick={() => updateJobStatus(job.id, job.completed)}>
@@ -120,6 +119,13 @@ const JobCard = forwardRef(({ job, updateJobStatus, editJob, deleteJob, expandAl
               </p>
             </div>
           </div>
+
+          {job.image_url && (
+            <div className="job-card-group">
+              <h3>Image:</h3>
+              <img src={job.image_url} alt="Job" style={{ maxWidth: "100%" }} />
+            </div>
+          )}
 
           <div id="service-notes" className="job-card-group">
             <h3>Notes:</h3>

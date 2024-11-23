@@ -54,12 +54,10 @@ const JobListingSection = ({ jobs, updateJobStatus, editJob, deleteJob, jobRefs 
           editJob={editJob}
           deleteJob={deleteJob}
           jobRefs={jobRefs}
-          onViewAll={() => handleViewAll(completedJobs, "completed")} // Handle expanding completed jobs
-          showAll={showCompleted} // Control visibility for completed jobs
+          onViewAll={() => handleViewAll(completedJobs, "completed")}
+          showAll={showCompleted}
         />
       </section>
-
-      {/* Skip FullWidthJobList rendering */}
     </>
   );
 };

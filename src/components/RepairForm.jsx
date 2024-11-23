@@ -1,4 +1,5 @@
-const RepairForm = ({ formData, handleInputChange, handleSubmit }) => {
+// src/components/RepairForm.jsx
+const RepairForm = ({ formData, handleInputChange, handleSubmit, handleImageUpload }) => {
   return (
     <form onSubmit={handleSubmit} className="repair-form">
       <div className="form-group">
@@ -90,6 +91,17 @@ const RepairForm = ({ formData, handleInputChange, handleSubmit }) => {
           value={formData.notes}
           onChange={handleInputChange}
         ></textarea>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="image">Upload Image</label>
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          onChange={handleImageUpload} // Call handleImageUpload
+        />
       </div>
 
       <button className="btn" id="submit-btn" type="submit">Submit</button>
